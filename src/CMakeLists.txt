@@ -438,7 +438,7 @@ install( TARGETS libfluidsynth-OBJ
     OBJECTS )
 
 # Here are applied/linked the OBJECT library dependencies
-target_link_libraries ( libfluidsynth PRIVATE libfluidsynth-OBJ )
+target_link_libraries ( libfluidsynth INTERFACE libfluidsynth-OBJ )
 
 # ************ CLI program ************
 
