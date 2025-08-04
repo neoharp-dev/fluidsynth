@@ -18,6 +18,11 @@ FluidSynth generates audio by reading and handling MIDI events from MIDI input d
 
 [![SonarQube Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=FluidSynth_fluidsynth&metric=alert_status)](https://sonarcloud.io/dashboard?id=FluidSynth_fluidsynth) [![OHLOH Project Stats](https://www.openhub.net/p/fluidsynth/widgets/project_thin_badge?format=gif)](https://www.openhub.net/p/fluidsynth)
 
+## Note about this version
+
+This is a version of FluidSynth with patches from Neoharp development team
+
+The master branch might receive force-push from time to time as this version gets rebased on upstream
 
 ## Documentation
 
