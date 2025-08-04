@@ -252,6 +252,8 @@ FLUIDSYNTH_API int fluid_synth_count_effects_groups(fluid_synth_t *synth);
 FLUID_DEPRECATED FLUIDSYNTH_API void fluid_synth_set_sample_rate(fluid_synth_t *synth, float sample_rate);
 FLUIDSYNTH_API void fluid_synth_set_gain(fluid_synth_t *synth, float gain);
 FLUIDSYNTH_API float fluid_synth_get_gain(fluid_synth_t *synth);
+FLUIDSYNTH_API int fluid_synth_set_channel_gain_offset(fluid_synth_t *synth, float gain, int chan);
+FLUIDSYNTH_API float fluid_synth_get_channel_gain_offset(fluid_synth_t *synth, int chan);
 FLUIDSYNTH_API int fluid_synth_set_polyphony(fluid_synth_t *synth, int polyphony);
 FLUIDSYNTH_API int fluid_synth_get_polyphony(fluid_synth_t *synth);
 FLUIDSYNTH_API int fluid_synth_get_active_voice_count(fluid_synth_t *synth);

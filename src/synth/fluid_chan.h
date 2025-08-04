@@ -123,6 +123,7 @@ struct _fluid_channel_t
     /* NRPN system */
     enum fluid_gen_type nrpn_select;      /* Generator ID of SoundFont NRPN message */
     char nrpn_active;      /* 1 if data entry CCs are for NRPN, 0 if RPN */
+    float gain_offset;                    /**< gain ofsset for channel */
     
     /* The values of the generators, set by NRPN messages, or by
      * fluid_synth_set_gen(), are cached in the channel so they can be
