@@ -24,6 +24,10 @@ cmake_minimum_required ( VERSION 3.13 )
 # 3.11 because COMPATIBILITY SameMinorVersion in CMakePackageConfigHelpers
 # 3.13.5 because it is the latest supported in Windows XP
 
+if(CMAKE_HOST_SYSTEM_NAME STREQUAL "Darwin")
+    set(CMAKE_OSX_ARCHITECTURES "arm64;x86_64" CACHE STRING "" FORCE)
+endif()
+
 if(POLICY CMP0075) # CMake version 3.13.5 warns when the policy is not set or value is OLD
   cmake_policy(SET CMP0075 NEW)
 endif()
