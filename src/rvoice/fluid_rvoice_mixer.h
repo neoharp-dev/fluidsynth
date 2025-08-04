@@ -24,6 +24,7 @@
 #include "fluidsynth_priv.h"
 #include "fluid_rvoice.h"
 #include "fluid_ladspa.h"
+#include "fluid_limiter.h"
 
 typedef struct _fluid_rvoice_mixer_t fluid_rvoice_mixer_t;
 
@@ -81,6 +82,9 @@ void fluid_rvoice_mixer_set_mix_fx(fluid_rvoice_mixer_t *mixer, int on);
 #ifdef LADSPA
 void fluid_rvoice_mixer_set_ladspa(fluid_rvoice_mixer_t *mixer,
                                    fluid_ladspa_fx_t *ladspa_fx, int audio_groups);
+#endif
+#ifdef LIMITER
+int fluid_rvoice_mixer_set_limiter(fluid_rvoice_mixer_t *mixer, fluid_real_t sample_rate, fluid_limiter_settings_t* settings);
 #endif
 
 #endif
