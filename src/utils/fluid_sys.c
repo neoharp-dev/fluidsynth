@@ -33,6 +33,12 @@
 // Do not include pthread on windows. It includes winsock.h, which collides with ws2tcpip.h from fluid_sys.h
 // It isn't need on Windows anyway.
 #include <pthread.h>
+#include <sched.h>
+#endif
+
+#ifdef __ANDROID__
+// for setpriority()
+#include <sys/resource.h>
 #endif
 
 /* WIN32 HACK - Flag used to differentiate between a file descriptor and a socket.
@@ -414,30 +420,72 @@ fluid_thread_self_set_prio(int prio_level)
 void
 fluid_thread_self_set_prio(int prio_level)
 {
-    struct sched_param priority;
+  if(prio_level > 0)
+  {
+#ifdef __ANDROID__
+    int target_prio = -prio_level; // higher priorities for nice() are negative
+    int prio;
 
-    if(prio_level > 0)
-    {
-
-        memset(&priority, 0, sizeof(priority));
-        priority.sched_priority = prio_level;
-
-        if(pthread_setschedparam(pthread_self(), SCHED_FIFO, &priority) == 0)
-        {
-            return;
-        }
-
-#ifdef DBUS_SUPPORT
-        /* Try to gain high priority via rtkit */
-
-        if(fluid_rtkit_make_realtime(0, prio_level) == 0)
-        {
-            return;
-        }
-
-#endif
-        FLUID_LOG(FLUID_WARN, "Failed to set thread to high priority");
+    errno = 0;
+    prio = getpriority(PRIO_PROCESS, 0);
+    if (prio == -1 && errno != 0) {
+        FLUID_LOG(FLUID_ERR, "getpriority() failed");
+        return;
     }
+    if (prio == target_prio) {
+        FLUID_LOG(FLUID_INFO, "thread priority is the same, no need to change");
+        return;
+    }
+    while (prio != target_prio) {
+        if (prio > target_prio) {
+            prio--;
+        }
+        else {
+            // if the caller wants to be de-prioritized, so be it
+            prio = target_prio;
+        }
+        if (setpriority(PRIO_PROCESS, 0, prio) != 0) {
+            FLUID_LOG(FLUID_ERR, "setpriority(%d) failed (target priority %d)", prio, target_prio);
+            break;
+        }
+    }
+
+#else // __ANDROID__ (non-android code follows)
+
+    struct sched_param param;
+    int target_prio = prio_level;
+    int policy;
+    int sched_min = sched_get_priority_min(SCHED_FIFO);
+    int sched_max = sched_get_priority_max(SCHED_FIFO);
+    if (target_prio < sched_min) {
+        FLUID_LOG(FLUID_WARN, "target thread pirority (%d) < sched_min, will set to %d", target_prio, sched_min);
+        target_prio = sched_min;
+    }
+    if (target_prio > sched_max) {
+        FLUID_LOG(FLUID_WARN, "target thread pirority (%d) > sched_max, will set to %d", target_prio, sched_max);
+        target_prio = sched_max;
+    }
+
+    if (pthread_getschedparam(pthread_self(), &policy, &param) != 0) {
+         FLUID_LOG(FLUID_ERR, "pthread_getschedparam() failed");
+    }
+    else {
+        param.sched_priority = target_prio;
+        if (pthread_setschedparam(pthread_self(), SCHED_FIFO, &param) != 0) {
+            FLUID_LOG(FLUID_ERR, "pthread_setschedparam() failed (target priority %d)", target_prio);
+        }
+    }
+#ifdef DBUS_SUPPORT
+    /* Try to gain high priority via rtkit */
+
+    if(fluid_rtkit_make_realtime(0, prio_level) == 0)
+    {
+        return;
+    }
+#endif
+
+#endif // __ANDROID__
+  }
 }
 
 

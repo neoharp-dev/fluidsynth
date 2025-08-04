@@ -278,4 +278,6 @@
 /* Define to 1 if you have C++ filesystem support */
 #cmakedefine HAVE_CXX_FILESYSTEM @HAVE_CXX_FILESYSTEM@
 
+#cmakedefine HAVE_PTHREAD_ATTR_SETINHERITSCHED @HAVE_PTHREAD_ATTR_SETINHERITSCHED@
+
 #endif /* CONFIG_H */
