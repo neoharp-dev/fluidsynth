@@ -55,6 +55,7 @@ new_fluid_channel(fluid_synth_t *synth, int num)
     chan->channum = num;
     chan->preset = NULL;
     chan->tuning = NULL;
+    chan->gain_offset = 0.0;
 
     fluid_channel_init(chan);
     fluid_channel_init_ctrl(chan, 0);

@@ -3798,6 +3798,50 @@ fluid_synth_set_gain(fluid_synth_t *synth, float gain)
     fluid_synth_api_exit(synth);
 }
 
+/**
+ * Set synth midi channel gain offset.
+ * @param synth FluidSynth instance
+ * @param gain Gain offset value (function clamps value to the range 0.0 to 10.0)
+ */
+int
+fluid_synth_set_channel_gain_offset(fluid_synth_t *synth, float gain_offset, int chan)
+{
+    fluid_return_if_fail(synth != NULL) FLUID_FAILED;
+    fluid_synth_api_enter(synth);
+
+    fluid_clip(gain_offset, 0.0f, 10.0f);
+
+    if( chan < 0 || chan >= synth->midi_channels ) {
+	    fluid_synth_api_exit(synth);
+	    return FLUID_FAILED;
+    }
+
+    synth->channel[chan]->gain_offset = gain_offset;
+
+    fluid_synth_api_exit(synth);
+    return FLUID_OK;
+}
+
+/**
+ * Get synth midi channel gain offset.
+ * @param synth FluidSynth instance
+ * @param gain Gain offset value (function clamps value to the range 0.0 to 10.0)
+ */
+float
+fluid_synth_get_channel_gain_offset(fluid_synth_t *synth, int chan)
+{
+    fluid_return_if_fail(synth != NULL) 0.0;
+    fluid_synth_api_enter(synth);
+
+    if( chan < 0 || chan >= synth->midi_channels ) {
+	    fluid_synth_api_exit(synth);
+	    return 0.0;
+    }
+
+    fluid_synth_api_exit(synth);
+    return synth->channel[chan]->gain_offset;
+}
+
 /* Called by synthesis thread to update the gain in all voices */
 static void
 fluid_synth_update_gain_LOCAL(fluid_synth_t *synth)
@@ -5378,6 +5422,7 @@ fluid_synth_alloc_voice_LOCAL(fluid_synth_t *synth, fluid_sample_t *sample, int 
     fluid_voice_t *voice = NULL;
     fluid_channel_t *channel = NULL;
     unsigned int ticks;
+    float gain;
 
     /* check if there's an available synthesis process */
     for(i = 0; i < synth->polyphony; i++)
@@ -5426,8 +5471,11 @@ fluid_synth_alloc_voice_LOCAL(fluid_synth_t *synth, fluid_sample_t *sample, int 
 
     channel = synth->channel[chan];
 
+    gain = synth->gain + channel->gain_offset;
+    fluid_clip(gain, 0.0f, 10.0f);
+
     if(fluid_voice_init(voice, sample, zone_range, channel, key, vel,
-                        synth->storeid, ticks, synth->gain) != FLUID_OK)
+                        synth->storeid, ticks, gain) != FLUID_OK)
     {
         FLUID_LOG(FLUID_WARN, "Failed to initialize voice");
         return NULL;
