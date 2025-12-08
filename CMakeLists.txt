@@ -741,7 +741,7 @@ unset ( OBOE_SUPPORT CACHE )
 if ( enable-oboe )
   find_package ( oboe )
   if ( oboe_FOUND )
-    set(CMAKE_CXX_STANDARD 14)
+    set(CMAKE_CXX_STANDARD 17)
     set(CMAKE_CXX_STANDARD_REQUIRED ON)
     set ( OBOE_SUPPORT 1 )
     list( APPEND PC_REQUIRES_PRIV "oboe-1.0")
@@ -800,7 +800,22 @@ if ( enable-threads )
 endif ( enable-threads )
 
 unset ( HAVE_OPENMP CACHE )
+
+if (ANDROID)
+# workarround from  https://gitlab.kitware.com/cmake/cmake/-/issues/21725
+macro(find_static_package)
+    set(_ORIG_CMAKE_FIND_LIBRARY_SUFFIXES ${CMAKE_FIND_LIBRARY_SUFFIXES})
+    set(CMAKE_FIND_LIBRARY_SUFFIXES .a) # TODO: platform specific extensions for static lib is better
+    find_package(${ARGV})
+    set(CMAKE_FIND_LIBRARY_SUFFIXES ${_ORIG_CMAKE_FIND_LIBRARY_SUFFIXES})
+endmacro()
+find_static_package ( OpenMP COMPONENTS C )
+else()
+
 find_package ( OpenMP COMPONENTS C )
+
+endif()
+
 if (enable-openmp AND ENABLE_UBSAN)
     message(WARNING "OpenMP is not supported when UBSan is enabled. Disabling OpenMP.")
 elseif (enable-openmp AND OpenMP_C_FOUND )
