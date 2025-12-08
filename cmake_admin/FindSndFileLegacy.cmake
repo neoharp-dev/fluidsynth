@@ -86,7 +86,7 @@ elseif(_sndfile_library)
   find_package(mp3lame QUIET)
   find_package(mpg123 QUIET)
 
-  if(NOT CMAKE_CROSSCOMPILING)
+  if(NOT CMAKE_CROSSCOMPILING OR ANDROID)
     if(${CMAKE_VERSION} VERSION_LESS "3.19")
       message(STATUS
         "Your CMake version (${CMAKE_VERSION}) is less than 3.19 - cannot check for external sndfile libraries."
@@ -147,7 +147,7 @@ int main() {
 endif()
 
 # Handle transitive dependencies
-if(PC_SNDFILE_FOUND)
+if(PC_SNDFILE_FOUND AND NOT ANDROID)
   get_target_properties_from_pkg_config("${_sndfile_library}" "PC_SNDFILE"
                                         "_sndfile")
 else()
