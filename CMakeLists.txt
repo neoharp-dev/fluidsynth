@@ -221,6 +221,10 @@ include ( TestVLA )
 include ( TestBigEndian )
 test_big_endian ( WORDS_BIGENDIAN )
 
+include (CheckFunctionExists)
+
+check_function_exists (pthread_attr_setinheritsched HAVE_PTHREAD_ATTR_SETINHERITSCHED)
+
 unset ( LIBFLUID_CPPFLAGS CACHE )
 unset ( LIBFLUID_LIBS CACHE )
 unset ( FLUID_CPPFLAGS CACHE )
