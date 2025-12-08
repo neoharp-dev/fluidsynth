@@ -294,4 +294,7 @@
 /* Define to 1 if native DLS support is enabled */
 #cmakedefine ENABLE_NATIVE_DLS @ENABLE_NATIVE_DLS@
 
+/* Define to 1 if pthread_attr_setinheritsched is available */
+#cmakedefine HAVE_PTHREAD_ATTR_SETINHERITSCHED @HAVE_PTHREAD_ATTR_SETINHERITSCHED@
+
 #endif /* CONFIG_H */
