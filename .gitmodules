@@ -6,4 +6,4 @@
 	url = https://github.com/kthohr/gcem.git
 [submodule "signalsmith-audio-basics"]
 	path = signalsmith-audio-basics
-	url = https://github.com/Signalsmith-Audio/basics.git
+	url = https://github.com/neoharp-dev/signalsmith-audio-basics.git
